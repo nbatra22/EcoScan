@@ -1,10 +1,12 @@
 import requests
 import json
 
-
 TEST_PLANT_ID = '3172371'
 TEST_GEO_COORDINATES = (33.97559444444445, -117.3256611111111)
 OPENCAGE_API_KEY = ""
+TDWG_MAP = {
+    "US-CA": "TDWG:CAL", 
+    "CA-AB" : "TDWG:ABT" }
 
 def get_iso3166(latitude, longitude, api_key):
 
@@ -56,9 +58,6 @@ def get_iso3166(latitude, longitude, api_key):
         print(f"An unexpected error occurred: {e}")
     return None
 def iso2tdwg (iso_code):
-    TDWG_MAP = {
-    "US-CA": "TDWG:CAL", 
-    "CA-AB" : "TDWG:ABT" }
 
     if iso_code in TDWG_MAP:
         print(f"Map Code: {TDWG_MAP[iso_code]}")
@@ -108,29 +107,30 @@ def checkNative(gbif_id, tdwg_id):
         print(f"An unexpected error occurred during GBIF API call: {e}")
     return None
 
+def performCompute(geoCoord, plantID):
 
+  iso_code = get_iso3166(
+      geoCoord[0],
+      geoCoord[1],
+      OPENCAGE_API_KEY
+  )
+  if iso_code:
+      print(f"\nSuccessfully extracted ISO_3166-2 code: {iso_code}")
+      tdwgCode = iso2tdwg(iso_code)
 
+      if tdwgCode:
+          is_native = checkNative(plantID, tdwgCode)
 
-iso_code = get_iso3166(
-    TEST_GEO_COORDINATES[0],
-    TEST_GEO_COORDINATES[1],
-    OPENCAGE_API_KEY
-)
+          if is_native is True:
+              print(f"\nFinal Result: Plant {plantID} is likely NATIVE at {geoCoord}.")
+              return True
+          elif is_native is False:
+              print(f"\nFinal Result: Plant {plantID} is NOT NATIVE at {geoCoord}.")
+          else:
+              print(f"\nFinal Result: Could not determine nativeness for Plant {plantID} at {geoCoord}.")
+      else:
+          print("Cannot proceed: No TDWG ID found for the given ISO_3166-2 code.")
+  else:
+      print("\nFailed to extract ISO_3166-2 code.")
 
-if iso_code:
-    print(f"\nSuccessfully extracted ISO_3166-2 code: {iso_code}")
-    tdwgCode = iso2tdwg(iso_code)
-
-    if tdwgCode:
-        is_native = checkNative(TEST_PLANT_ID, tdwgCode)
-
-        if is_native is True:
-            print(f"\nFinal Result: Plant {TEST_PLANT_ID} is likely NATIVE at {TEST_GEO_COORDINATES}.")
-        elif is_native is False:
-            print(f"\nFinal Result: Plant {TEST_PLANT_ID} is NOT NATIVE at {TEST_GEO_COORDINATES}.")
-        else:
-            print(f"\nFinal Result: Could not determine nativeness for Plant {TEST_PLANT_ID} at {TEST_GEO_COORDINATES}.")
-    else:
-        print("Cannot proceed: No TDWG ID found for the given ISO_3166-2 code.")
-else:
-    print("\nFailed to extract ISO_3166-2 code.")
+  return False

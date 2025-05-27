@@ -1,12 +1,12 @@
 import io
 from kindwise import PlantApi
+from checkNative import performCompute
 from PIL import Image
 import piexif
 import sys
 
-    # --- Configuration ---
 PLANT_ID_API_KEY = ""  # replace with your Plant.id API key
-IMAGE_PATH = "testRiv.jpg"
+IMAGE_PATH = "test.jpg"
 def initAPI():
     try:
       api = PlantApi(api_key=PLANT_ID_API_KEY)
@@ -97,12 +97,21 @@ def extract_gps(image_path):
     except KeyError:
         return None
 
-
-
 if __name__ == "__main__":
 
     coords = extract_gps(IMAGE_PATH)
     api = initAPI()
     plantNames = plantID(api, coords)
     
+    print(plantNames)
+
+    print("\n--- Checking nativeness for each plant ---")
+    for plant_info in plantNames:
+        plant_id = plant_info['id']
+        plant_gps = plant_info['gps']
+        
+        print(f"\nProcessing: {plant_info['name']} (ID: {plant_id}) at {plant_info['gps']}")
+        plant_info['native'] = performCompute(plant_gps, plant_id)
+    
+    print("\n--- After performCompute for each plant ---")
     print(plantNames)
