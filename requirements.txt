@@ -1,3 +1,4 @@
 Pillow
 piexif
 google-cloud-vision
+kindwise-api-client
