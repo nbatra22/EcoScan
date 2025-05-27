@@ -5,7 +5,7 @@ import piexif
 import sys
 
     # --- Configuration ---
-PLANT_ID_API_KEY = "EJJfz4RfgDhynxuJedPvdC7xz1MXzuZ5OUfl5A277oh2bGnU1P"  # Replace with your actual Plant.id API key
+PLANT_ID_API_KEY = ""  # Replace with your actual Plant.id API key
 IMAGE_PATH = "plant2.jpg"      # Changed to plant2.jpg as per your output
 def initAPI():
     try:
