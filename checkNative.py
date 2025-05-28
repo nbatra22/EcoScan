@@ -3,7 +3,7 @@ import json
 
 TEST_PLANT_ID = '3172371'
 TEST_GEO_COORDINATES = (33.97559444444445, -117.3256611111111)
-OPENCAGE_API_KEY = ""
+OPENCAGE_API_KEY = "" #replace with opencage id
 TDWG_MAP = {
     "US-CA": "TDWG:CAL", 
     "CA-AB" : "TDWG:ABT" }
@@ -23,7 +23,6 @@ def get_iso3166(latitude, longitude, api_key):
         data = response.json()
 
         if data and data['results']:
-            # The most relevant result is usually the first one
             components = data['results'][0]['components']
 
             # get the ISO_3166-2 code 
@@ -33,10 +32,8 @@ def get_iso3166(latitude, longitude, api_key):
                     if '-' in iso_code and iso_code.startswith(components.get('country_code', '').upper()):
                         return iso_code.upper()
                     
-                # If the loop finishes without finding a suitable ISO_3166-2, try other paths
+                # if loop finishes without ISO_3166-2, try other paths
             
-            # Fallback checks (OpenCage can structure this slightly differently sometimes)
-            # Check for a direct 'state_code' (US) or 'province_code' (CA) field
             country_code = components.get('country_code', '').upper()
             if 'state_code' in components and country_code:
                 return f"{country_code}-{components['state_code'].upper()}"
@@ -97,7 +94,7 @@ def checkNative(gbif_id, tdwg_id):
                     return None 
         
         print(f"Species {gbif_id} distribution record for {tdwg_id} not found.")
-        return False # Not present means not native based on GBIF data for that specific region
+        return False # not present means not native based on GBIF data for that specific region
 
     except requests.exceptions.HTTPError as e:
         print(f"GBIF API HTTP Error: {e.response.status_code} - {e.response.text}")

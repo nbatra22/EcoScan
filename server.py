@@ -5,8 +5,8 @@ from PIL import Image
 import piexif
 import sys
 
-PLANT_ID_API_KEY = ""  # replace with your Plant.id API key
-IMAGE_PATH = "test.jpg"
+PLANT_ID_API_KEY = ""  # replace with Plant.id API key
+IMAGE_PATH = "" # replace with image path
 def initAPI():
     try:
       api = PlantApi(api_key=PLANT_ID_API_KEY)
@@ -62,7 +62,7 @@ def plantID(api, gpsCoord):
             print(f"Is plant probability: {identification.result.is_plant.probability:.2%}")
             return []
 
-    except Exception as e: # Catch errors
+    except Exception as e:
         print(f"An error occurred during identification: {e}")
         return []
     
