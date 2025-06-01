@@ -53,7 +53,7 @@ def plantID(api, gpsCoord):
                             'name':suggestion.name, 
                             'id': gbif_id,
                             'gps': gpsCoord,
-                            'native': False})
+                            'native': ''})
             else:
                 print("No specific plant suggestions found.")
 
