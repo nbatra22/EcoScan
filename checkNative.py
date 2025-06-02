@@ -84,12 +84,9 @@ def checkNative(gbif_id, tdwg_id):
 
             if dist.get('locationId') == tdwg_id:
                 establishment_means = dist.get('establishmentMeans')
-                if establishment_means is None or establishment_means in ['NATIVE', 'ENDEMIC']:
-                    print(f"Species {gbif_id} is found and is considered NATIVE in {tdwg_id}.")
-                    return True
-                elif establishment_means in ['INTRODUCED', 'INVASIVE', 'NATURALIZED']:
+                if establishment_means is None or establishment_means in ['NATIVE', 'NATIVEREINTRODUCED', 'INTRODUCED', 'INTRODUCEDASSITEDCOLONISATION', 'VAGRANT']:
                     print(f"Species {gbif_id} is found and is considered {establishment_means} in {tdwg_id}.")
-                    return False
+                    return establishment_means
                 else:
                     print(f"Species {gbif_id} found in {tdwg_id}, but establishmentMeans is '{establishment_means}' (status unclear).")
                     return None 
