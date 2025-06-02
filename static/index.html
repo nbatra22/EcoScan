@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>iPhone Photo Uploader</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+      background-color: #f0f0f0;
+      color: #333;
+    }
+    h2 {
+      color: #0056b3;
+      margin-bottom: 30px;
+    }
+    button {
+      padding: 12px 25px;
+      font-size: 1.1em;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      margin-bottom: 20px;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    input[type="file"] {
+      display: block;
+      margin-bottom: 20px;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      background-color: white;
+      width: 80%;
+      max-width: 300px;
+    }
+    #statusMessage {
+      margin-top: 20px;
+      font-size: 1em;
+      font-weight: bold;
+      color: #555;
+      text-align: center;
+    }
+    #statusMessage.success {
+      color: green;
+    }
+    #statusMessage.error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <h2>Upload Photo</h2>
+  <p>Tap to take a new photo or select from your library. </p>
+  
+  <input type="file" accept="image/*" id="photoInput"> 
+  
+  <button id="uploadBtn">Upload Photo</button>
+  <p id="statusMessage"></p>
+
+  <script>
+    const uploadUrl = "http://192.168.1.90:3000/upload_image"; 
+
+    const uploadBtn = document.getElementById("uploadBtn");
+    const photoInput = document.getElementById("photoInput");
+    const statusMessage = document.getElementById("statusMessage");
+
+    function updateStatus(message, type = 'info') {
+      statusMessage.textContent = message;
+      statusMessage.className = type === 'success' ? 'success' : (type === 'error' ? 'error' : '');
+    }
+
+    uploadBtn.onclick = async () => {
+      const file = photoInput.files[0];
+      if (!file) {
+        updateStatus("Please select a photo first.", 'error');
+        return;
+      }
+
+      updateStatus("Starting upload...", 'info');
+      uploadBtn.disabled = true; // disable button during upload
+
+      try {
+        const formData = new FormData();
+        formData.append('image', file); 
+        // No longer sending GPS data via FormData from the client side.
+        // Server will handle GPS extraction from EXIF or use a default.
+
+        const response = await fetch(uploadUrl, {
+          method: 'POST',
+          body: formData,
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+          updateStatus("Photo uploaded and signal sent successfully!", 'success');
+          console.log("Upload successful:", result);
+          photoInput.value = ''; // Clear the selected file
+        } else {
+          updateStatus(`Upload failed: ${result.error || 'Unknown error'}`, 'error');
+          console.error("Upload failed:", result);
+        }
+
+      } catch (err) {
+        updateStatus(`An error occurred: ${err.message || err}`, 'error');
+        console.error("Overall error:", err);
+      } finally {
+        uploadBtn.disabled = false; // Re-enable button
+      }
+    };
+  </script>
+</body>
+</html>

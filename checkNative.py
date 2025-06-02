@@ -3,7 +3,8 @@ import json
 
 TEST_PLANT_ID = '3172371'
 TEST_GEO_COORDINATES = (33.97559444444445, -117.3256611111111)
-OPENCAGE_API_KEY = "" #replace with opencage id
+OPENCAGE_API_KEY = "10891d1c87204fc1b9e8608144525938" #replace with opencage id
+
 TDWG_MAP = {
     "US-CA": "TDWG:CAL", 
     "CA-AB" : "TDWG:ABT" }

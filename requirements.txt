@@ -3,3 +3,4 @@ piexif
 google-cloud-vision
 kindwise-api-client
 paho-mqtt
+flask
